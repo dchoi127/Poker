@@ -52,9 +52,9 @@ public class PokerHand {
 	}
 	
 	
-	public static boolean twoPair(ArrayList<Card> cards) {
-		
-	}
+//	public static boolean twoPair(ArrayList<Card> cards) {
+//		
+//	}
 	//counts number of times value is in card ArrayList
 	private static int countOccur(ArrayList<Card> cards, int value) {
 		int count = 0;
