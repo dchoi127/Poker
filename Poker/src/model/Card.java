@@ -1,3 +1,4 @@
+package model;
 
 public class Card {
 	public static final int HEARTS = 1;
@@ -7,7 +8,8 @@ public class Card {
 
 	private int suit;
 	private int value;
-
+	
+	// Values go from 1 - 13 (1 is Ace)
 	public Card(int value, int suit) {
 		this.value = value;
 		this.suit = suit;
@@ -19,5 +21,15 @@ public class Card {
 
 	public int getSuit() {
 		return suit;
+	}
+	
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || this.getClass() != obj.getClass())
+			return false;
+		
+		Card c = (Card) obj;
+		return suit == c.suit && value == c.value;
 	}
 }
