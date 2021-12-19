@@ -1,5 +1,7 @@
+package model;
 import java.util.Scanner;
 import java.util.ArrayList;
+
 
 public class Driver {
 
@@ -7,8 +9,8 @@ public class Driver {
 
 	public static void main(String[] args) {
 		String bORs; // string to keep track of whether user is big blind or small
-		ArrayList<Card> uCards = new ArrayList<Card>(); // user cards
-		ArrayList<Card> cCards = new ArrayList<Card>(); // community cards
+		PokerHand uCards = new PokerHand(); // user cards
+		PokerHand cCards = new PokerHand(); // community cards
 
 		readInTwo(uCards);
 
@@ -22,7 +24,7 @@ public class Driver {
 		commCards(cCards);
 	}
 
-	public static void commCards(ArrayList<Card> cCards) {
+	public static void commCards(PokerHand cCards) {
 		int value, suit;
 		readInTwo(cCards);
 		System.out.println("ENTER CARD VALUE: ");
@@ -30,20 +32,20 @@ public class Driver {
 
 		System.out.println("ENTER CARD SUIT: \n 1: HEART \n 2: SPADE \n 3: ClUBS \n 4: DIAMONDS");
 		suit = input.nextInt();
-		cCards.add(new Card(value, suit));
+		cCards.addCard(value, suit);
 
 	}
 
 	// preRound is executed if user is not BIG BLIND (dont think we need to calc
 	// stats here since its just pre round)
-	public static void preRound(ArrayList<Card> uCards) {
-		if (PokerHand.hasPair(uCards) != null) {
+	public static void preRound(PokerHand uCards) {
+		if (uCards.hasPair() != -1) {
 			System.out.println("YOU HAVE A PAIR. YOU SHOULD PROBABLY STAY IN");
 		}
 	}
 
 	// reads in two cards and adds them to the arraylist
-	public static void readInTwo(ArrayList<Card> cards) {
+	public static void readInTwo(PokerHand uCards) {
 		int value, suit;
 		System.out.println("ENTER CARD VALUE: ");
 		value = input.nextInt();
@@ -51,7 +53,7 @@ public class Driver {
 		System.out.println("ENTER CARD SUIT: \n 1: HEART \n 2: SPADE \n 3: ClUBS \n 4: DIAMONDS");
 		suit = input.nextInt();
 
-		cards.add(new Card(value, suit));
+		uCards.addCard(value, suit);
 
 		System.out.println("ENTER CARD VALUE: ");
 		value = input.nextInt();
@@ -59,7 +61,7 @@ public class Driver {
 		System.out.println("ENTER CARD SUIT: \n 1: HEART \n 2: SPADE \n 3: ClUBS \n 4: DIAMONDS");
 		suit = input.nextInt();
 
-		cards.add(new Card(value, suit));
+		uCards.addCard(value, suit);
 	}
 
 }
