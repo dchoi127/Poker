@@ -66,4 +66,41 @@ public class JUnit {
 		
 		Assert.assertArrayEquals(expected, hand.fullHouse());
 	}
+	
+	@Test
+	public void testStraightFlush1() {
+		PokerHand hand = new PokerHand();
+		hand.addCard(1, 1);
+		hand.addCard(2, 1);
+		hand.addCard(3, 1);
+		hand.addCard(4, 1);
+		hand.addCard(5, 1);
+		
+		Assert.assertEquals(5, hand.straightFlush());
+	}
+	
+	@Test
+	public void testStraightFlush2() {
+		PokerHand hand = new PokerHand();
+		hand.addCard(1, 1);
+		hand.addCard(13, 1);
+		hand.addCard(12, 1);
+		hand.addCard(11, 1);
+		hand.addCard(10, 1);
+		
+		Assert.assertEquals(1, hand.straightFlush());
+	}
+	
+	@Test
+	public void testStraightFlush3() {
+		PokerHand hand = new PokerHand();
+		hand.addCard(1, 1);
+		hand.addCard(13, 1);
+		hand.addCard(12, 1);
+		hand.addCard(11, 1);
+		hand.addCard(10, 2);
+		hand.addCard(2, 1);
+		
+		Assert.assertEquals(-1, hand.straightFlush());
+	}
 }

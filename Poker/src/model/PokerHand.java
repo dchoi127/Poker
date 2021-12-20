@@ -3,6 +3,33 @@ package model;
 import java.util.ArrayList;
 
 public class PokerHand {
+	
+	// Final variables represented numerically to compare hands (higher is better)
+	private static final int HIGH_CARD = 1;
+	private static final int PAIR = 2;
+	private static final int TWO_PAIR = 3;
+	private static final int THREE_OF_A_KIND = 4;
+	private static final int STRAIGHT = 5;
+	private static final int FLUSH = 6;
+	private static final int FULL_HOUSE = 7;
+	private static final int FOUR_OF_A_KIND = 8;
+	private static final int STRAIGHT_FLUSH = 9;
+	private static final int ROYAL_FLUSH = 10;
+	
+	
+	interface HandRanking {
+		int getRanking();
+	}
+	
+	private HandRanking[] ranking = new HandRanking[] {
+			new HandRanking() { public int getRanking() { return highCard(); } },
+			new HandRanking() { public int getRanking() { return hasPair(); } },
+			new HandRanking() { public int getRanking() { return threeOfAKind(); } },
+			new HandRanking() { public int getRanking() { return hasStraight(); } },
+			new HandRanking() { public int getRanking() { return hasFlush(); } },
+			new HandRanking() { public int getRanking() { return fourOfAKind(); } },
+			new HandRanking() { public int getRanking() { return straightFlush(); } }
+	};
 
 	private ArrayList<Card> cards;
 
@@ -103,12 +130,14 @@ public class PokerHand {
 				for (int j = 1; j < 5; j++) {
 					if (countOccur(14 - j) == 0) {
 						hasStraight = false;
+						break;
 					}
 				}
 			} else {
 				for (int j = 1; j < 5; j++) {
 					if (countOccur(c.getValue() - j) == 0) {
 						hasStraight = false;
+						break;
 					}
 				}
 			}
@@ -178,13 +207,79 @@ public class PokerHand {
 
 		return -1;
 	}
-	
-	/* 
+	 
+	// Returns value of highest straight flush or - 1
 	public int straightFlush() {
-		
-	}
-	*/
+		if (hasStraight() != -1 && hasFlush() != -1) {
+			for (Card c : cards) {
+				boolean hasStraight = true;
+				int count = 1, suit = c.getSuit();
 
+				// Accounts for Ace high straight
+				if (c.getValue() == 1) {
+					for (int j = 1; j < 5; j++) {
+						if (countOccur(14 - j) == 0) {
+							hasStraight = false;
+							break;
+						} else {
+							for (Card d : cards) {
+								if (d.getValue() == 14 - j && d.getSuit() == suit) {
+									count++;
+									break;
+								}
+							}
+						}
+					}
+				} else {
+					for (int j = 1; j < 5; j++) {
+						if (countOccur(c.getValue() - j) == 0) {
+							hasStraight = false;
+							break;
+						} else {
+							for (Card d : cards) {
+								if (d.getValue() == c.getValue() - j && d.getSuit() == suit) {
+									count++;
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				if (hasStraight && count == 5) {
+					return c.getValue();
+				}
+			}
+		}
+		
+		return -1;
+	}
+	
+	// Returns true/false for royal flush
+	public boolean royalFlush() {
+		if (straightFlush() == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	// Unfinished
+	public int getHandRanking() {
+		int handRanking = 1;
+		int[] fullHouse = fullHouse(), twoPair = twoPair();
+		
+		if (royalFlush()) {
+			handRanking = ROYAL_FLUSH;
+		} else if (fullHouse[0] != 0 && fullHouse[1] != 0) {
+			handRanking = FULL_HOUSE;
+		} else if (twoPair[0] != 0 && twoPair[1] != 0) {
+			handRanking = TWO_PAIR;
+		}
+		
+		return handRanking;
+	}
+	
 	// counts number of times value is in card ArrayList
 	private int countOccur(int value) {
 		int count = 0;
