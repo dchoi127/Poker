@@ -22,7 +22,7 @@ public class PokerHand {
 	}
 	
 	private HandRanking[] ranking = new HandRanking[] {
-			new HandRanking() { public int getRanking() { return highCard(); } },
+			new HandRanking() { public int getRanking() { return highCard(0); } },
 			new HandRanking() { public int getRanking() { return hasPair(); } },
 			new HandRanking() { public int getRanking() { return -1; } }, // two pair
 			new HandRanking() { public int getRanking() { return threeOfAKind(); } },
@@ -51,12 +51,15 @@ public class PokerHand {
 		cards.add(card);
 		return true;
 	}
-
-	public int highCard() {
+	
+	//included an exclude param 
+	public int highCard(int exclude) {
 		int max = 0;
 
 		for (Card c : cards) {
-
+			if(c.getValue() == exclude) {
+				continue;
+			}
 			// Accounts for Ace high card
 			if (c.getValue() == 1) {
 				return 1;
@@ -86,6 +89,7 @@ public class PokerHand {
 
 	// Return value of two pairs in array
 	// [0, 0] if does not exist
+	// puts lower value pair in first idx and higher pair in second
 	public int[] twoPair() {
 		int count = 0;
 		int[] twoPair = new int[2];
@@ -103,7 +107,17 @@ public class PokerHand {
 				}
 			}
 		}
-
+		
+		//sorting 
+		if(twoPair[0] > twoPair[1]) {
+			int temp = twoPair[1];
+			twoPair[1] = twoPair[0];
+			twoPair[0] = temp;
+		}
+		if(twoPair[0] == 0) {
+			twoPair[1] = 0;
+		}
+		
 		return twoPair;
 	}
 
@@ -195,6 +209,7 @@ public class PokerHand {
 			fullHouse[0] = threeOfAKind;
 			fullHouse[1] = twoPair[1];
 		}
+		
 
 		return fullHouse;
 	}
@@ -288,6 +303,75 @@ public class PokerHand {
 		}
 		
 		return handRanking;
+	}
+	
+	//compareTo method
+	//returns 1 if curr obj has a better hand than other
+	//returns 0 if there is a tie
+	//returns -1 if curr obj has a worse hand than other
+	public int compareTo(PokerHand other) {
+		if(getHandRanking() > other.getHandRanking()) {
+			return 1;
+		}else if (getHandRanking() < other.getHandRanking()) {
+			return -1;
+		}else {
+			int index = getHandRanking(); //if they're equal get the index
+			if(index == TWO_PAIR) {
+				int[] curr = twoPair();
+				int[] check = other.twoPair();
+				
+				return compareToArray(curr,check, TWO_PAIR);
+			
+			}else if(index == FULL_HOUSE) {
+				int[] curr = fullHouse();
+				int[] check = other.fullHouse();
+				
+				return compareToArray(curr,check, FULL_HOUSE);
+				
+			}else {
+				int curr = ranking[index].getRanking();
+				int check = ranking[index].getRanking();
+				
+				if(curr == check) { //if they have the same val, then check high card and exclude shared card
+					if(highCard(curr) == other.highCard(curr)) {
+						return 0;
+					}else {
+						return highCard(curr) > other.highCard(curr) ? 1 : -1; 
+					}
+				}else {
+					return curr > check ? 1 : 0;
+				}
+			}
+		}
+	}
+	
+	//helper to compareArrays
+	//returns 1 if curr array has a better twopair/fullhouse 
+	//returns -1 if curr array has worse twopair/fullhouse
+	//returns 0 if equal
+	//mode is used for whether we're checking for TWO_PAIR or FULL_HOUSE
+	private int compareToArray(int[] curr, int[] other, int mode) {
+		if(mode == TWO_PAIR) {
+			if(curr[0] == other[0]) {
+				if(curr[1] == other[1]) {
+					return 0;
+				}else {
+					return curr[1] > other[1] ? 1 : -1;
+				}
+			}else {
+				return curr[0] > other[0] ? 1 : -1;
+			}
+		}else{
+			if(curr[0] == other[0]) {
+				if(curr[1] == other[1]) {
+					return 0;
+				}else {
+					return curr[1] > other[1] ? 1 : -1;
+				}
+			}else {
+				return curr[0] > other[0] ? 1 : -1;
+			}
+		}
 	}
 	
 	// counts number of times value is in card ArrayList
