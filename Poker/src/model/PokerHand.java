@@ -339,7 +339,7 @@ public class PokerHand {
 						return highCard(curr) > other.highCard(curr) ? 1 : -1; 
 					}
 				}else {
-					return curr > check ? 1 : 0;
+					return curr > check ? 1 : -1;
 				}
 			}
 		}
