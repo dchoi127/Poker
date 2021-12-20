@@ -157,10 +157,16 @@ public class JUnit {
 
 		PokerHand hand2 = new PokerHand();
 		hand2.addCard(9, 3);
-		hand2.addCard(8, 1);
+		hand2.addCard(10, 3);
 		addCards(hand2, community);
 
-		Assert.assertTrue(hand1.compareTo(hand2) > 0);
+		Assert.assertTrue(hand1.compareTo(hand2) == 0);
+	}
+	
+	@Test
+	public void testRemoveCard1() {
+		Deck d = new Deck();
+		Assert.assertTrue(d.removeCard(1, 1));
 	}
 
 	// Add cards into hand
