@@ -5,16 +5,16 @@ import java.util.ArrayList;
 public class PokerHand {
 	
 	// Final variables represented numerically to compare hands (higher is better)
-	private static final int HIGH_CARD = 1;
-	private static final int PAIR = 2;
-	private static final int TWO_PAIR = 3;
-	private static final int THREE_OF_A_KIND = 4;
-	private static final int STRAIGHT = 5;
-	private static final int FLUSH = 6;
-	private static final int FULL_HOUSE = 7;
-	private static final int FOUR_OF_A_KIND = 8;
-	private static final int STRAIGHT_FLUSH = 9;
-	private static final int ROYAL_FLUSH = 10;
+	private static final int HIGH_CARD = 0;
+	private static final int PAIR = 1;
+	private static final int TWO_PAIR = 2;
+	private static final int THREE_OF_A_KIND = 3;
+	private static final int STRAIGHT = 4;
+	private static final int FLUSH = 5;
+	private static final int FULL_HOUSE = 6;
+	private static final int FOUR_OF_A_KIND = 7;
+	private static final int STRAIGHT_FLUSH = 8;
+	private static final int ROYAL_FLUSH = 9;
 	
 	
 	interface HandRanking {
@@ -24,9 +24,11 @@ public class PokerHand {
 	private HandRanking[] ranking = new HandRanking[] {
 			new HandRanking() { public int getRanking() { return highCard(); } },
 			new HandRanking() { public int getRanking() { return hasPair(); } },
+			new HandRanking() { public int getRanking() { return -1; } }, // two pair
 			new HandRanking() { public int getRanking() { return threeOfAKind(); } },
 			new HandRanking() { public int getRanking() { return hasStraight(); } },
 			new HandRanking() { public int getRanking() { return hasFlush(); } },
+			new HandRanking() { public int getRanking() { return -1; } }, // full house
 			new HandRanking() { public int getRanking() { return fourOfAKind(); } },
 			new HandRanking() { public int getRanking() { return straightFlush(); } }
 	};
@@ -264,17 +266,25 @@ public class PokerHand {
 		}
 	}
 	
-	// Unfinished
+	// Need to check/test
 	public int getHandRanking() {
-		int handRanking = 1;
+		int handRanking = 0;
 		int[] fullHouse = fullHouse(), twoPair = twoPair();
 		
 		if (royalFlush()) {
-			handRanking = ROYAL_FLUSH;
-		} else if (fullHouse[0] != 0 && fullHouse[1] != 0) {
-			handRanking = FULL_HOUSE;
-		} else if (twoPair[0] != 0 && twoPair[1] != 0) {
-			handRanking = TWO_PAIR;
+			return ROYAL_FLUSH;
+		}
+		
+		for (int i = ranking.length - 1; i >= 0; i--) {
+			if (ranking[i].getRanking() != -1) {
+				return i;
+			}
+			if (i == FULL_HOUSE && fullHouse[0] != 0 && fullHouse[1] != 0) {
+				return i;
+			}
+			if (i == TWO_PAIR && twoPair[0] != 0 && twoPair[1] != 0) {
+				return i;
+			}
 		}
 		
 		return handRanking;
