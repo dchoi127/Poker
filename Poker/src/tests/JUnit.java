@@ -1,5 +1,7 @@
 package tests;
 
+import java.util.ArrayList;
+
 import org.junit.*;
 import model.*;
 
@@ -167,6 +169,21 @@ public class JUnit {
 	public void testRemoveCard1() {
 		Deck d = new Deck();
 		Assert.assertTrue(d.removeCard(1, 1));
+	}
+	
+	// DOUBLE CHECK THIS MATH: THIS SHOULD BE EVERY POSSIBLE HAND OF 2 CARDS
+	@Test
+	public void testGenerateHands1() {
+		Deck d = new Deck();
+		ArrayList<Card[]> hands = d.generateHands(52, 2);
+		Assert.assertTrue(1326 == hands.size()); // 52! / (20! * 2!)
+		
+		for (Card[] hand : hands) {
+			for (Card c : hand) {
+				System.out.print(c + " ");
+			}
+			System.out.println("");
+		}
 	}
 
 	// Add cards into hand
