@@ -3,7 +3,9 @@ package model;
 import java.util.Scanner;
 
 public class Driver {
-
+	/* 
+	
+	
 	public static Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args) {
@@ -63,4 +65,5 @@ public class Driver {
 		uCards.addCard(value, suit);
 	}
 
+	*/
 }
