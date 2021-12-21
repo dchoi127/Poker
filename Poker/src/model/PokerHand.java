@@ -59,12 +59,13 @@ public class PokerHand {
 	} };
 
 	private ArrayList<Card> cards;
-	
+	private static ArrayList<Card> community = new ArrayList<>();
+
 	public PokerHand() {
 		cards = new ArrayList<>();
 	}
 
-	public boolean addCard(int value, int suit) {
+	public boolean addUserCard(int value, int suit) {
 		Card card = new Card(value, suit);
 
 		for (Card c : cards) {
@@ -73,18 +74,35 @@ public class PokerHand {
 			}
 		}
 
+		for (Card c : community) {
+			if (c.equals(card)) {
+				return false;
+			}
+		}
+
 		cards.add(card);
+
 		return true;
 	}
-	
-	// Returns copy of cards 
-	public ArrayList<Card> getCards() {
-		return new ArrayList<Card>(cards);
+
+	public static boolean addCommunityCard(int value, int suit) {
+		Card card = new Card(value, suit);
+
+		for (Card c : community) {
+			if (c.equals(card)) {
+				return false;
+			}
+		}
+
+		community.add(card);
+
+		return true;
 	}
 
 	// included an exclude param
 	public int highCard(ArrayList<Integer> exclude) {
 		int max = 0;
+		ArrayList<Card> cards = mergeCommunity();
 
 		for (Card c : cards) {
 			if (exclude.contains(c.getValue())) {
@@ -153,6 +171,8 @@ public class PokerHand {
 
 	// Returns value of three of a kind or -1
 	public int threeOfAKind() {
+		ArrayList<Card> cards = mergeCommunity();
+
 		if (countOccur(1) >= 3) {
 			return 1;
 		}
@@ -168,6 +188,8 @@ public class PokerHand {
 
 	// Returns value of high card straight
 	public int hasStraight() {
+		ArrayList<Card> cards = mergeCommunity();
+
 		for (Card c : cards) {
 			boolean hasStraight = true;
 
@@ -198,6 +220,8 @@ public class PokerHand {
 
 	// Returns value of highest flush or -1
 	public int hasFlush() {
+		ArrayList<Card> cards = mergeCommunity();
+
 		for (int i = 1; i <= 4; i++) {
 			int max = 0, count = 0;
 			boolean aceFound = false;
@@ -244,6 +268,8 @@ public class PokerHand {
 
 	// Returns value of four of a kind or -1
 	public int fourOfAKind() {
+		ArrayList<Card> cards = mergeCommunity();
+
 		for (Card c : cards) {
 			if (countOccur(c.getValue()) >= 4) {
 				return c.getValue();
@@ -255,6 +281,8 @@ public class PokerHand {
 
 	// Returns value of highest straight flush or - 1
 	public int straightFlush() {
+		ArrayList<Card> cards = mergeCommunity();
+
 		if (hasStraight() != -1 && hasFlush() != -1) {
 			for (Card c : cards) {
 				boolean hasStraight = true;
@@ -409,9 +437,58 @@ public class PokerHand {
 		}
 	}
 
+	public String toString() {
+		String result = "";
+
+		for (Card c : cards) {
+			result += c + " ";
+		}
+
+		return result;
+	}
+
+	public boolean contains(Card card) {
+		for (Card c : cards) {
+			if (c.equals(card)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public ArrayList<Card> getCards() {
+		return cards;
+	}
+
+	// Returns number of hands user would win as a percentage
+	public float getProbability() {
+		PossibleHands.removePossibleHands(this);
+		ArrayList<PokerHand> possibleHands = PossibleHands.getPossibleHands();
+		int betterHands = 0, totalHands = possibleHands.size();
+
+		for (PokerHand p : possibleHands) {
+			if (this.compareTo(p) > 0) {
+				betterHands++;
+			}
+		}
+
+		float percentage = (float) betterHands / (float) totalHands;
+		return percentage;
+	}
+
+	public static void resetCommunity() {
+		community = new ArrayList<>();
+	}
+
+	public static ArrayList<Card> getCommunityCards() {
+		return community;
+	}
+
 	// counts number of times value is in card ArrayList
 	private int countOccur(int value) {
+		ArrayList<Card> cards = mergeCommunity();
 		int count = 0;
+
 		for (Card c : cards) {
 			if (c.getValue() == value) {
 				count++;
@@ -419,49 +496,25 @@ public class PokerHand {
 		}
 		return count;
 	}
-	
-	/* n is number of cards in deck 
-	 * r is number of cards generated per hand
-	 * 
-	 * I think it is easier to do n = 52 (so values from 1 - 52) 
-	 * and then split the suits up (1 - 13 is hearts, 14 - 26 is spades etc).
-	 * Then we remove all hands that include the cards in the user's hand in another method?
-	 * 
-	 * public for testing reasons rn
-	 */
-	public static ArrayList<Card[]> generateHands(int n, int r) {
-		ArrayList<Card[]> hands=  new ArrayList<>();
-		Card[] hand = new Card[r];
-		
-		for (int i = 0; i < r; i++) {
-			hand[i] = new Card(i, 1);
+
+	private ArrayList<Card> mergeCommunity() {
+		ArrayList<Card> cards = new ArrayList<>();
+
+		for (Card c : this.cards) {
+			cards.add(c);
 		}
-		
-		int i = r - 1;
-		while (hand[0].getValue() < n - r + 1) {
-			while (i > 0 && hand[i].getValue() == n - r + 1) {
-				i--;
+
+		for (Card c : community) {
+
+			for (Card d : cards) {
+				if (d.equals(c)) {
+					break;
+				}
 			}
-			
-			Card[] handCopy = new Card[r];
-			for (int j = 0; j < hand.length; j++) {
-				int value = hand[j].getValue();
-				int suit = value / 13 + 1;
-				
-				value = value % 13 + 1;
-				
-				handCopy[j] = new Card(value, suit);
-			}
-			hands.add(handCopy);
-			
-			hand[i].setValue(hand[i].getValue() + 1);
-			
-			while (i < r - 1) {
-				hand[i + 1].setValue(hand[i].getValue() + 1);
-				i++;
-			}
+
+			cards.add(c);
 		}
-		
-		return hands;
+
+		return cards;
 	}
 }
