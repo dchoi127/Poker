@@ -164,18 +164,11 @@ public class JUnit {
 
 		Assert.assertTrue(hand1.compareTo(hand2) == 0);
 	}
-	
-	@Test
-	public void testRemoveCard1() {
-		Deck d = new Deck();
-		Assert.assertTrue(d.removeCard(1, 1));
-	}
-	
+
 	// DOUBLE CHECK THIS MATH: THIS SHOULD BE EVERY POSSIBLE HAND OF 2 CARDS
 	@Test
 	public void testGenerateHands1() {
-		Deck d = new Deck();
-		ArrayList<Card[]> hands = d.generateHands(52, 2);
+		ArrayList<Card[]> hands = PokerHand.generateHands(52, 2);
 		Assert.assertTrue(1326 == hands.size()); // 52! / (20! * 2!)
 		
 		for (Card[] hand : hands) {
