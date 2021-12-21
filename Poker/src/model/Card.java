@@ -23,6 +23,18 @@ public class Card {
 		return suit;
 	}
 	
+	public void setValue(int value) {
+		this.value = value;
+	}
+	
+	public void setSuit(int suit) {
+		this.suit = suit;
+	}
+	
+	public String toString() {
+		return "Value: " + value + ", Suit: " + suit;
+	}
+	
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
