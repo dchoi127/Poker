@@ -65,9 +65,10 @@ public class PokerHand {
 		cards = new ArrayList<>();
 	}
 
-	public boolean addUserCard(int value, int suit) {
+	public boolean addUserCard(int value, int suit, Deck deck) {
 		Card card = new Card(value, suit);
 
+		/* 
 		for (Card c : cards) {
 			if (c.equals(card)) {
 				return false;
@@ -79,22 +80,27 @@ public class PokerHand {
 				return false;
 			}
 		}
-
+		*/
+		
 		cards.add(card);
-
+		deck.removeCard(card);	
+		
 		return true;
 	}
 
-	public static boolean addCommunityCard(int value, int suit) {
+	public static boolean addCommunityCard(int value, int suit, Deck deck) {
 		Card card = new Card(value, suit);
-
+		
+		/*
 		for (Card c : community) {
 			if (c.equals(card)) {
 				return false;
 			}
 		}
+		*/
 
 		community.add(card);
+		deck.removeCard(card);	
 
 		return true;
 	}
@@ -366,6 +372,7 @@ public class PokerHand {
 	// returns 0 if there is a tie
 	// returns < 0 if curr obj has a worse hand than other
 	public int compareTo(PokerHand other) {
+		ArrayList<Card> cards = mergeCommunity();
 		if (getHandRanking() > other.getHandRanking()) {
 			return 1;
 		} else if (getHandRanking() < other.getHandRanking()) {
@@ -461,17 +468,24 @@ public class PokerHand {
 	}
 
 	// Returns number of hands user would win as a percentage
-	public float getProbability() {
-		PossibleHands.removePossibleHands(this);
-		ArrayList<PokerHand> possibleHands = PossibleHands.getPossibleHands();
-		int betterHands = 0, totalHands = possibleHands.size();
+	public float getProbability(Deck deck) {
+		ArrayList<PokerHand> possibleHands = deck.getPossibleHands();
+		int betterHands = 0, worseHands = 0, evenHands = 0, totalHands = possibleHands.size();
 
 		for (PokerHand p : possibleHands) {
-			if (this.compareTo(p) > 0) {
+			int temp = this.compareTo(p);
+			
+			if (temp > 0) {
 				betterHands++;
+			} else if (temp < 0) {
+				worseHands++;
+			} else {
+				evenHands++;
 			}
 		}
-
+		
+		System.out.println(betterHands + " " + worseHands + " " + evenHands);
+		
 		float percentage = (float) betterHands / (float) totalHands;
 		return percentage;
 	}
@@ -505,13 +519,6 @@ public class PokerHand {
 		}
 
 		for (Card c : community) {
-
-			for (Card d : cards) {
-				if (d.equals(c)) {
-					break;
-				}
-			}
-
 			cards.add(c);
 		}
 
