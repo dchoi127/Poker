@@ -343,7 +343,6 @@ public class PokerHand {
 		}
 	}
 
-	// Need to check/test
 	public int getHandRanking() {
 		int handRanking = 0;
 		int[] fullHouse = fullHouse(), twoPair = twoPair();
@@ -425,7 +424,7 @@ public class PokerHand {
 
 			} else {
 				int curr = ranking[index].getRanking();
-				int check = ranking[index].getRanking();
+				int check = other.ranking[index].getRanking();
 
 				if (curr == check) { // if they have the same val, then check high card and exclude shared card
 					ArrayList<Integer> exclude = new ArrayList<Integer>();
@@ -484,7 +483,7 @@ public class PokerHand {
 			}
 		}
 		
-		System.out.println(betterHands + " " + worseHands + " " + evenHands);
+		System.out.println("You beat " + betterHands + " hands. Lose to " + worseHands + " hands. Tie with " + evenHands + " hands.");
 		
 		float percentage = (float) betterHands / (float) totalHands;
 		return percentage;
