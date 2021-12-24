@@ -154,23 +154,17 @@ public class PokerHand {
 
 		for (int i = 13; i > 1; i--) {
 			if (countOccur(i) >= 2) {
-				if (count == 0) {
-					twoPair[count++] = i;
-				} else {
-					twoPair[count] = i;
+				twoPair[count++] = i;
+				if (count == 2) {
+					break;
 				}
 			}
 		}
 
 		// sorting
-		if (twoPair[0] > twoPair[1]) {
-			int temp = twoPair[1];
-			twoPair[1] = twoPair[0];
-			twoPair[0] = temp;
-		}
-		if (twoPair[0] == 0) {
-			twoPair[1] = 0;
-		}
+		int temp = twoPair[1];
+		twoPair[1] = twoPair[0];
+		twoPair[0] = temp;
 
 		return twoPair;
 	}
@@ -371,7 +365,6 @@ public class PokerHand {
 	// returns 0 if there is a tie
 	// returns < 0 if curr obj has a worse hand than other
 	public int compareTo(PokerHand other) {
-		ArrayList<Card> cards = mergeCommunity();
 		if (getHandRanking() > other.getHandRanking()) {
 			return 1;
 		} else if (getHandRanking() < other.getHandRanking()) {
@@ -385,18 +378,38 @@ public class PokerHand {
 				if (curr[1] == check[1]) {
 					if (curr[0] == check[0]) {
 						ArrayList<Integer> exclude = new ArrayList<Integer>();
+						exclude.add(curr[0]);
+						exclude.add(curr[1]);
+						
 						int val = highCard(exclude) - other.highCard(exclude);
-
-						while (val == 0 && exclude.size() != cards.size()) {
-							exclude.add(highCard(exclude));
-							val = highCard(exclude) - other.highCard(exclude);
+						
+						if (val == 0) {
+							return 0;
+						}
+						if (highCard(exclude) == 1) {
+							return 1;
+						}
+						if (other.highCard(exclude) == 1) {
+							return -1;
 						}
 
 						return val;
 					} else {
+						if (curr[0] == 1) {
+							return 1;
+						}
+						if (check[0] == 1) {
+							return -1;
+						}
 						return curr[0] > check[0] ? 1 : -1;
 					}
 				} else {
+					if (curr[1] == 1) {
+						return 1;
+					}
+					if (check[1] == 1) {
+						return -1;
+					}
 					return curr[1] > check[1] ? 1 : -1;
 				}
 
@@ -406,19 +419,23 @@ public class PokerHand {
 
 				if (curr[0] == check[0]) {
 					if (curr[1] == check[1]) {
-						ArrayList<Integer> exclude = new ArrayList<Integer>();
-						int val = highCard(exclude) - other.highCard(exclude);
-
-						while (val == 0 && exclude.size() != cards.size()) {
-							exclude.add(highCard(exclude));
-							val = highCard(exclude) - other.highCard(exclude);
-						}
-
-						return val;
+						return 0;
 					} else {
+						if (curr[1] == 1) {
+							return 1;
+						}
+						if (check[1] == 1) {
+							return -1;
+						}
 						return curr[1] > check[1] ? 1 : -1;
 					}
 				} else {
+					if (curr[0] == 1) {
+						return 1;
+					}
+					if (check[0] == 1) {
+						return -1;
+					}
 					return curr[0] > check[0] ? 1 : -1;
 				}
 
@@ -428,15 +445,53 @@ public class PokerHand {
 
 				if (curr == check) { // if they have the same val, then check high card and exclude shared card
 					ArrayList<Integer> exclude = new ArrayList<Integer>();
+					
+					if (index == FOUR_OF_A_KIND) {
+						for (int i = 0; i < 4; i++) {
+							exclude.add(curr);
+						}
+					} else if (index == THREE_OF_A_KIND) {
+						for (int i = 0; i < 3; i++) {
+							exclude.add(curr);
+						}
+					} else if (index == PAIR) {
+						for (int i = 0; i < 2; i++) {
+							exclude.add(curr);
+						}
+					}
+					
 					int val = highCard(exclude) - other.highCard(exclude);
 
-					while (val == 0 && exclude.size() != cards.size()) {
-						exclude.add(highCard(exclude));
-						val = highCard(exclude) - other.highCard(exclude);
+					while (val == 0 && exclude.size() < 5) {
+						int excluded = highCard(exclude);
+						
+						for (int i = 0; i < countOccur(excluded); i++) {
+							exclude.add(excluded);
+						}
+						
+						if (exclude.size() < 5) {
+							val = highCard(exclude) - other.highCard(exclude);
+						}
 					}
-
+					
+					if (val == 0) {
+						return 0;
+					}
+					if (highCard(exclude) == 1) {
+						return 1;
+					}
+					if (other.highCard(exclude) == 1) {
+						return -1;
+					}
+					
 					return val;
 				} else {
+					if (curr == 1) {
+						return 1;
+					}
+					if (check == 1) {
+						return -1;
+					}
 					return curr > check ? 1 : -1;
 				}
 			}
