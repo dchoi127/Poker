@@ -11,7 +11,7 @@ public class JUnit {
 	public void reset() {
 		PokerHand.resetCommunity();
 	}
-	
+
 	// testTwoPair was wrong, would add to array even with single pair
 	@Test
 	public void testTwoPair() {
@@ -178,10 +178,10 @@ public class JUnit {
 
 		Assert.assertTrue(hand1.compareTo(hand2) == 0);
 	}
-	
+
 	@Test
 	public void testCompareTo3() {
-		int[][] community = {  { 10, 1 }, { 11, 1 }, { 12, 1 } };
+		int[][] community = { { 10, 1 }, { 11, 1 }, { 12, 1 } };
 
 		PokerHand hand1 = new PokerHand();
 		Deck d = new Deck();
@@ -196,6 +196,25 @@ public class JUnit {
 		Assert.assertTrue(hand1.compareTo(hand2) < 0);
 	}
 
+	@Test
+	public void testCompareTo4() {
+		int[][] community = { { 6, 1 }, { 10, 1 }, { 10, 2 }, { 1, 1 }, { 1, 2 } };
+
+		PokerHand hand1 = new PokerHand();
+		Deck d = new Deck();
+		hand1.addUserCard(1, 3, d);
+		hand1.addUserCard(3, 1, d);
+		addCards(community, d);
+		
+		Deck d2 = new Deck();
+		PokerHand hand2 = new PokerHand();
+		hand2.addUserCard(1, 4, d2);
+		hand2.addUserCard(7, 1, d2);
+
+		Assert.assertTrue(hand1.compareTo(hand2) == 0);
+		hand1.getProbability(d);
+	}
+
 	// DOUBLE CHECK THIS MATH: THIS SHOULD BE EVERY POSSIBLE HAND OF 2 CARDS
 	@Test
 	public void testGenerateHands1() {
@@ -203,20 +222,20 @@ public class JUnit {
 		// PokerHand hand = new PokerHand();
 		// hand.addUserCard(1, 1, d);
 		ArrayList<PokerHand> hands = d.getPossibleHands();
-		
+
 		for (PokerHand h : hands) {
 			System.out.println(h);
 		}
 
 		Assert.assertTrue(1326 == hands.size()); // 52! / (50! * 2!)
 	}
-	
+
 	// PLAY AROUND WITH THIS AND TEST!!!
 	@Test
 	public void testProbability1() {
 		Deck d = new Deck();
 		int[][] community = { { 10, 1 }, { 11, 1 }, { 12, 1 } };
-		
+
 		PokerHand hand = new PokerHand();
 		hand.addUserCard(2, 2, d);
 		hand.addUserCard(2, 3, d);
