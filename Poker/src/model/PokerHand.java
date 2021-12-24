@@ -152,19 +152,21 @@ public class PokerHand {
 			twoPair[count++] = 1;
 		}
 
-		for (int i = 13; i > 1; i--) {
+		for (int i = 13; i > 1 && count < 2; i--) {
 			if (countOccur(i) >= 2) {
 				twoPair[count++] = i;
-				if (count == 2) {
-					break;
-				}
 			}
 		}
 
-		// sorting
-		int temp = twoPair[1];
-		twoPair[1] = twoPair[0];
-		twoPair[0] = temp;
+		if (count != 2) {
+			twoPair[0] = 0;
+			twoPair[1] = 0;
+		} else {
+			// sorting
+			int temp = twoPair[1];
+			twoPair[1] = twoPair[0];
+			twoPair[0] = temp;
+		}
 
 		return twoPair;
 	}
@@ -258,9 +260,14 @@ public class PokerHand {
 		int[] fullHouse = new int[2], twoPair = twoPair();
 		int threeOfAKind = threeOfAKind();
 
-		if (threeOfAKind != -1 && twoPair[1] != 0) {
-			fullHouse[0] = threeOfAKind;
-			fullHouse[1] = twoPair[1];
+		if (threeOfAKind != -1 && twoPair[0] != 0 && twoPair[1] != 0) {
+			if (threeOfAKind == twoPair[1]) {
+				fullHouse[0] = threeOfAKind;
+				fullHouse[1] = twoPair[0];
+			} else {
+				fullHouse[0] = threeOfAKind;
+				fullHouse[1] = twoPair[1];
+			}	
 		}
 
 		return fullHouse;
