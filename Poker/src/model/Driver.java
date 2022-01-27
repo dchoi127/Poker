@@ -2,6 +2,9 @@ package model;
 
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+
 public class Driver {	
 	
 	public static Scanner input = new Scanner(System.in);
@@ -72,5 +75,9 @@ public class Driver {
 			hand.addUserCard(value, suit, deck);
 		}	
 	}
+	
+	
+	
+
 
 }
