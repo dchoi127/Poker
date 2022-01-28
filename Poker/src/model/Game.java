@@ -2,8 +2,8 @@ package model;
 
 public class Game {
 
-	PokerHand userHand = new PokerHand();
-	Deck deck = new Deck();
+	PokerHand userHand;
+	Deck deck;
 
 //		for (int i = 0; i < 2; i++) {
 //			readInCard(userHand, deck);
@@ -17,7 +17,13 @@ public class Game {
 //			userHand.getProbability(deck);
 //			readInCard(null, deck);
 //		}
-	public float probability() {
+	
+	
+	public Game() {
+		userHand = new PokerHand();
+		deck = new Deck();
+	}
+	public String probability() {
 		return userHand.getProbability(deck);
 	}
 
@@ -31,9 +37,12 @@ public class Game {
 		}
 	}
 
-	public void readInGUI(int value, int suit) {
-
-		readInCard(userHand, deck, value, suit);
+	public void readInGUI(int value, int suit, boolean commOrUser) {
+		if (commOrUser) {
+			readInCard(null, deck, value, suit);
+		}else {
+			readInCard(userHand, deck, value, suit);
+		}
 	}
 
 }

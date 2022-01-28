@@ -529,7 +529,7 @@ public class PokerHand {
 	}
 
 	// Returns number of hands user would win as a percentage
-	public float getProbability(Deck deck) {
+	public String getProbability(Deck deck) {
 		ArrayList<PokerHand> possibleHands = deck.getPossibleHands();
 		int betterHands = 0, worseHands = 0, evenHands = 0, totalHands = possibleHands.size();
 
@@ -545,10 +545,10 @@ public class PokerHand {
 			}
 		}
 		
-		System.out.println("You beat " + betterHands + " hands. Lose to " + worseHands + " hands. Tie with " + evenHands + " hands.");
+		return "You beat " + betterHands + " hands. Lose to " + worseHands + " hands. Tie with " + evenHands + " hands.";
 		
-		float percentage = (float) betterHands / (float) totalHands;
-		return percentage;
+//		float percentage = (float) betterHands / (float) totalHands;
+//		return percentage;
 	}
 
 	public static void resetCommunity() {
@@ -584,5 +584,13 @@ public class PokerHand {
 		}
 
 		return cards;
+	}
+	
+	public ArrayList<Card> getUserCards(){
+		return new ArrayList<Card>(cards);
+	}
+	
+	public ArrayList<Card> getCommCards(){
+		return new ArrayList<Card>(community);
 	}
 }
