@@ -1,44 +1,42 @@
 package model;
 
 import java.awt.Color;
-import java.awt.Dimension;
+
 import java.awt.Font;
-import java.awt.Graphics;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 
-import model.ImageLoader;
+import javax.swing.WindowConstants;
 
 public class PokerGUI extends JPanel {
 
 	private Game game;
+	private static JFrame frame = new JFrame("Poker");
 	private JButton addUCardButton = new JButton("Add User Card");
 	private JButton addCCardButton = new JButton("Add Comm Card");
 	private JButton resetButton = new JButton("Reset");
 	private JSlider slider = new JSlider();
 	private static final Color RED_COLOR = Color.ORANGE;
-	private static final int TABLE_HEIGHT = 10;
 	private static final int BUTTON_HEIGHT = 35;
 	private static final int BUTTON_WIDTH = 95;
-	private static final int TABLE_WIDTH = 20;
+	
 	private static final int CARD_WIDTH = 71;
-	private static final int CARD_HEIGHT = 96;
+	
 
 	private static final int NUM_BUTTON_WIDTH = 35;
 	private static final int H_DIST_NUM = 30;
 
 	private static final int C_CARD_Y = 120;
-	private static final int C_CARD_X = 200;
 	private static final int SUIT_WIDTH = 70;
 	private static final int SUIT_H_DIST = 65;
 
@@ -60,12 +58,19 @@ public class PokerGUI extends JPanel {
 	private JButton spadeButton = new JButton("SPADE");
 	private JButton clubButton = new JButton("CLUBS");
 	private JButton diaButton = new JButton("DIA");
-	
+
 	private JLabel prob = new JLabel("bruh");
+	private ImageIcon down = new ImageIcon("images/b1fv.gif");
+	private JLabel c1 = new JLabel();
+	private JLabel c2 = new JLabel();
+	private JLabel c3 = new JLabel();
+	private JLabel c4 = new JLabel();
+	private JLabel c5 = new JLabel();
+	private JLabel u1 = new JLabel();
+	private JLabel u2 = new JLabel();
 
 	private int numUCards = 0;
 	private int numCCards = 0;
-	private int totalCards = 0;
 	private int rankToAdd = -1;
 	private int suitToAdd = -1;
 	boolean commOrUser;
@@ -81,36 +86,6 @@ public class PokerGUI extends JPanel {
 		attachListeners();
 		setupPanel();
 		setupFrame();
-		repaint();
-
-	}
-	@Override
-	public void paint(Graphics g) {
-		int xVal = 280;
-		super.paint(g);
-		if (totalCards == 0) {
-			System.out.println(totalCards);
-			// comm cards
-			for (int x = 0; x < 5; x++) {
-				drawCard(g, xVal, C_CARD_Y, false, null);
-				xVal += 20 + CARD_WIDTH;
-			}
-			// this is user cards
-			xVal = 410;
-			drawCard(g, xVal, 500, false, null);
-			xVal += 20 + CARD_WIDTH;
-			drawCard(g, xVal, 500, false, null);
-		} else {
-			ArrayList<Card> comm = game.userHand.getCommCards();
-			ArrayList<Card> user = game.userHand.getUserCards();
-			System.out.println(comm.toString());
-			drawCards(g, user, comm);
-
-		}
-		if(numUCards == 2 && (numCCards == 3 || numCCards == 4 || numCCards == 5)) {
-			prob.setText(game.probability());
-			prob.setVisible(true);
-		}
 
 	}
 
@@ -121,6 +96,10 @@ public class PokerGUI extends JPanel {
 		JFrame frame = new JFrame("Poker");
 		JLabel uCards = new JLabel("Your Cards");
 		JLabel cCards = new JLabel("Community Cards");
+
+		frame.setLayout(null);
+
+		setupCards();
 		cCards.setFont(new Font("Courier", Font.ITALIC, 16));
 		uCards.setFont(new Font("Courier", Font.ITALIC, 16));
 		uCards.setBounds(445, 400, 800, 100);
@@ -133,9 +112,74 @@ public class PokerGUI extends JPanel {
 		frame.add(uCards);
 		frame.add(cCards);
 		frame.add(prob);
+		frame.add(c1);
+		frame.add(c2);
+		frame.add(c3);
+		frame.add(c4);
+		frame.add(c5);
+		frame.add(u1);
+		frame.add(u2);
 
 		frame.setVisible(true);
 
+	}
+
+	private void addCard() {
+		String path = "images/" + suitToLetter(suitToAdd) + rankToAdd + ".gif";
+
+		ImageIcon add = new ImageIcon(path);
+		if (commOrUser) {
+
+			if (numCCards == 1) {
+				c1.setIcon(add);
+			} else if (numCCards == 2) {
+				c2.setIcon(add);
+			} else if (numCCards == 3) {
+				c3.setIcon(add);
+			} else if (numCCards == 4) {
+				c4.setIcon(add);
+			} else if (numCCards == 5) {
+				c5.setIcon(add);
+			}
+		} else {
+			if (numUCards == 1) {
+				u1.setIcon(add);
+			} else if (numUCards == 2){
+				u2.setIcon(add);
+			}
+		}
+		if (numUCards == 2 && (numCCards == 3 || numCCards == 4 || numCCards == 5)) {
+			prob.setText(game.probability());
+			prob.setVisible(true);
+		}
+	}
+
+	private void setupCards() {
+		c1.setIcon(down);
+		c2.setIcon(down);
+		c3.setIcon(down);
+		c4.setIcon(down);
+		c5.setIcon(down);
+		u1.setIcon(down);
+		u2.setIcon(down);
+
+		int xVal = 280;
+
+		c1.setBounds(xVal, C_CARD_Y, 100, 100);
+		xVal += 20 + CARD_WIDTH;
+		c2.setBounds(xVal, C_CARD_Y, 100, 100);
+		xVal += 20 + CARD_WIDTH;
+		c3.setBounds(xVal, C_CARD_Y, 100, 100);
+		xVal += 20 + CARD_WIDTH;
+		c4.setBounds(xVal, C_CARD_Y, 100, 100);
+		xVal += 20 + CARD_WIDTH;
+		c5.setBounds(xVal, C_CARD_Y, 100, 100);
+
+		// this is user cards
+		xVal = 410;
+		u1.setBounds(xVal, 500, 100, 100);
+		xVal += 20 + CARD_WIDTH;
+		u2.setBounds(xVal, 500, 100, 100);
 	}
 
 	private void setupPanel() {
@@ -156,9 +200,9 @@ public class PokerGUI extends JPanel {
 		add(jButton);
 		add(qButton);
 		add(kButton);
-		
+
 		add(resetButton);
-		
+
 		add(heartButton);
 		add(spadeButton);
 		add(clubButton);
@@ -169,54 +213,15 @@ public class PokerGUI extends JPanel {
 
 	}
 
-	private void drawCards(Graphics g, ArrayList<Card> user, ArrayList<Card> comm) {
-		int xVal = 280;
-		int i = 0;
-
-		for (; i < comm.size(); i++) {
-			Card c = comm.get(i);
-			drawCard(g, xVal + (20 + CARD_WIDTH) * (i), C_CARD_Y, true, c);
-		}
-		for (; i < 5; i++) {
-			drawCard(g, xVal + (20 + CARD_WIDTH) * (i), C_CARD_Y, false, null);
-		}
-
-		i = 0;
-		xVal = 410;
-
-		for (; i < user.size(); i++) {
-			Card c = user.get(i);
-			drawCard(g, xVal, 500, true, c);
-			xVal += 20 + CARD_WIDTH;
-		}
-
-		for (; i < 2; i++) {
-			drawCard(g, xVal, 500, false, null);
-			xVal += 20 + CARD_WIDTH;
-		}
-
-	}
-
-	private void drawCard(Graphics g, int x, int y, boolean upOrDown, Card add) {
-		String name = "images/";
-		if (!upOrDown) {
-			g.drawImage(ImageLoader.getImage("images/b2fv.gif"), x, y, this);
+	private String suitToLetter(int suit) {
+		if (suit == Card.HEARTS) {
+			return "h";
+		} else if (suit == Card.CLUBS) {
+			return "c";
+		} else if (suit == Card.SPADE) {
+			return "s";
 		} else {
-			String st;
-			int suitAdd = add.getSuit();
-			int rankAdd = add.getValue();
-			if (suitAdd == Card.HEARTS) {
-				st = "h";
-			} else if (suitAdd == Card.CLUBS) {
-				st = "c";
-			} else if (suitAdd == Card.SPADE) {
-				st = "s";
-			} else {
-				st = "d";
-			}
-
-			name += st + rankAdd + ".gif";
-			g.drawImage(ImageLoader.getImage(name), x, y, this);
+			return "d";
 		}
 	}
 
@@ -241,9 +246,8 @@ public class PokerGUI extends JPanel {
 		spadeButton.setBounds(600 + SUIT_H_DIST, 300, SUIT_WIDTH, BUTTON_HEIGHT);
 		clubButton.setBounds(600 + SUIT_H_DIST * 2, 300, SUIT_WIDTH, BUTTON_HEIGHT);
 		diaButton.setBounds(600 + SUIT_H_DIST * 3, 300, SUIT_WIDTH, BUTTON_HEIGHT);
-		
-		resetButton.setBounds(448, 700, BUTTON_WIDTH, BUTTON_HEIGHT);
 
+		resetButton.setBounds(448, 700, BUTTON_WIDTH, BUTTON_HEIGHT);
 
 	}
 
@@ -344,13 +348,12 @@ public class PokerGUI extends JPanel {
 				if (rankToAdd != -1 && suitToAdd != -1 && numUCards < 2) {
 					game.readInGUI(rankToAdd, suitToAdd, false);
 					numUCards++;
-					totalCards++;
 				}
-
+				commOrUser = false;
+				addCard();
 				rankToAdd = -1;
 				suitToAdd = -1;
-				commOrUser = false;
-				repaint();
+
 			}
 		});
 
@@ -360,29 +363,28 @@ public class PokerGUI extends JPanel {
 				if (rankToAdd != -1 && suitToAdd != -1 && numCCards < 5) {
 					game.readInGUI(rankToAdd, suitToAdd, true);
 					numCCards++;
-					totalCards++;
+					
 				}
+				commOrUser = true;
+				addCard();
 				rankToAdd = -1;
 				suitToAdd = -1;
-				commOrUser = true;
-				repaint();
+
 			}
 		});
-		
+
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				game = new Game();
 				PokerHand.resetCommunity();
 				rankToAdd = -1;
 				suitToAdd = -1;
-				totalCards = 0;
 				numCCards = 0;
 				numUCards = 0;
 				prob.setVisible(false);
-				repaint();
+				setupCards();
 			}
 		});
-
 
 	}
 }

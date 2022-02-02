@@ -214,7 +214,20 @@ public class JUnit {
 		Assert.assertTrue(hand1.compareTo(hand2) == 0);
 		hand1.getProbability(d);
 	}
-
+	
+	@Test
+	public void testBruh() {
+		int[][] community = { { 10, 3 }, { 5, 3 }, { 9, 2 }, { 5, 2 }, { 11, 3 } };
+		PokerHand hand1 = new PokerHand();
+		Deck d = new Deck();
+		hand1.addUserCard(2, 2, d);
+		hand1.addUserCard(7, 1, d);
+		addCards(community, d);
+		
+		System.out.println(hand1.getProbability(d));
+		
+		
+	}
 	// DOUBLE CHECK THIS MATH: THIS SHOULD BE EVERY POSSIBLE HAND OF 2 CARDS
 	@Test
 	public void testGenerateHands1() {
